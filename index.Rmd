@@ -35,3 +35,91 @@ class: title-slide, middle, center
 ### BSc on Human Biology
 ### UPF School of Health and Life Sciences
 ### Academic Year 2021-2022
+
+---
+class: center, middle, inverse
+
+# Control flow statements
+
+---
+
+## Control flow statements
+
+* Sequentially evaluated statements may be written one below another using
+  newlines or in the same line separated by semicolons (`;`):
+  <pre>
+  i <- 1 ; j <- 0
+  </pre>
+* Conditional and looping statements have the condition surrounded by
+  parentheses `( )` and the associated code by braces `{ }`, except if it
+  consists of a single line.
+  <pre>
+  if (i > 0)
+      j <- i * 10
+
+  while (i < j) {
+      i <- i + 1
+      print(i)
+  }
+  for (i in 1:10) {
+      j <- j + i
+      print(j)
+  }
+  </pre>
+
+---
+
+## Interpretation and vectorization
+
+* The R language is interpreted, vectorized and includes implicit memory
+  management.  
+  &nbsp;&nbsp;
+* Looping statements are slow in R. The following example would be a (wrong)
+  approach in R following a classical programming style:
+  <pre>
+  x <- 1:100
+  logsum <- 0
+  for (i in 1:length(x)) {
+      logsum <- logsum + log(x[i])
+  }
+  </pre>
+* This would be the vectorized (right) approach in R:
+  <pre>
+  logsum <- sum(log(x))
+  </pre>
+
+---
+
+## The recycling rule
+
+* When performing operations between vectors of different length, R
+  follows a specific policy called the _recycling_ rule, by which the
+  shorter vector is _recycled_.  
+  &nbsp;&nbsp;
+* This rule is straightforward when the length of the longer vector is multiple
+  of the length of the shorter vector:
+  <pre>
+  > 2 * 1:4
+  [1] 2 4 6 8
+  > 2:3 * 1:4
+  [1] 2  6  6  12
+  </pre>
+* When the length of the longer vector is not multiple of the length of the
+  shorter vector, R issues a warning:
+  <pre>
+  > 2:3 * 1:5
+  [1] 2  6  6 12 10
+  Warning message:
+  In 2:3 * 1:5 :
+    longer object length is not a multiple of shorter object length
+  </pre>
+
+---
+
+## Concluding remarks
+
+* Control flow statements can conditionally execute code surrounded by braces.
+  Identation is only necessary for readability.  
+  &nbsp;&nbsp;
+* Vectorized operations are much faster than loops.  
+  &nbsp;&nbsp;
