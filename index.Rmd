@@ -90,6 +90,35 @@ class: center, middle, inverse
 
 ---
 
+## `apply()` functions
+
+* To traverse the data, R uses the apply functions.
+* `apply()`.
+* `lapply()`.
+* `sapply()`.
+* `tapply()`
+
+---
+
+## Concluding remarks
+
+* Control flow statements can conditionally execute code surrounded by braces.
+  Identation is only necessary for readability.  
+  &nbsp;&nbsp;
+* Vectorized operations are much faster than loops.  
+  &nbsp;&nbsp;
+  
+---
+class: center, middle, inverse
+
+# Data manipulation
+
+---
+
+## Add columns to data frames
+
+---
+
 ## The recycling rule
 
 * When performing operations between vectors of different length, R
@@ -114,12 +143,55 @@ class: center, middle, inverse
     longer object length is not a multiple of shorter object length
   </pre>
 
+--- 
+
+## Sorting and ordering data
+
+* `sort()`
+* `order()`
+
 ---
 
-## Concluding remarks
+## Combining and Merging datasets
 
-* Control flow statements can conditionally execute code surrounded by braces.
-  Identation is only necessary for readability.  
-  &nbsp;&nbsp;
-* Vectorized operations are much faster than loops.  
-  &nbsp;&nbsp;
+* Datasets with the same shape can be combined using:
+  * `cbind()` to add columns. 
+  * `rbind()` to add rows.
+* Datasets with the same shape can be combined using: 
+  * `merge()`, using common columns and rows (join)
+  * `match()`, returns the matching positions of two vectors. 
+
+--- 
+
+## The "join" concept
+
+* _Natural join_. Keep only rows that match in both data frames. 
+* _Full outer join_. Keep all rows from both data frames.
+* _Left outer join_. Include all rows from data frame `x` and only those from `y` that match.
+* _Right outer join_. Include all rows from data frame `y` and only those from `x` that match.
+
+---
+
+## Splitting data
+
+* `split()`
+
+---
+class: center, middle, inverse
+
+# Plotting with R
+
+---
+## Generic plot types in R
+
+* The basic plotting function in R is `plot()`.
+
+```{r, out.width="50%"}
+plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p")
+```
+
+
+
+
+
+
