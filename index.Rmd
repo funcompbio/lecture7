@@ -12,7 +12,7 @@
 
 ```{r setup, include=FALSE, cache=FALSE}
 options(htmltools.dir.version = FALSE, width=80)
-knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache=TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache=FALSE)
 
 ## from http://yihui.name/knitr/hooks#chunk_hooks
 knitr::knit_hooks$set(small.mar=function(before, options, envir) {
@@ -117,6 +117,9 @@ class: center, middle, inverse
 
 ## Add columns to data frames
 
+* Add new columns with `$`.
+
+
 ---
 
 ## The recycling rule
@@ -161,7 +164,7 @@ class: center, middle, inverse
   * `merge()`, using common columns and rows (join)
   * `match()`, returns the matching positions of two vectors. 
 
---- 
+---
 
 ## The "join" concept
 
@@ -182,15 +185,22 @@ class: center, middle, inverse
 # Plotting with R
 
 ---
+
 ## Generic plot types in R
 
 * The basic plotting function in R is `plot()`.
 
-```{r, out.width="50%"}
-plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p")
+```{r example-plot, out.width="50%"}
+plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p", col=c("red", "blue", "green")[iris$Species]) # Only works when the variable is a FACTOR
 ```
 
+---
 
+## Other types of plots
+
+* `barplot()`
+* `histogram()`
+* `boxplot()`
 
 
 
