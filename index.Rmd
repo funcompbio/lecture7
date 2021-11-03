@@ -1,6 +1,7 @@
 ---
   title: "Programming with data: the R language"
   author: Robert Castelo
+
   output:
     xaringan::moon_reader:
       nature:
@@ -12,7 +13,9 @@
 
 ```{r setup, include=FALSE, cache=FALSE}
 options(htmltools.dir.version = FALSE, width=80)
-knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache=FALSE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache=FALSE,
+                      comment="", 
+                      prompt=TRUE)
 
 ## from http://yihui.name/knitr/hooks#chunk_hooks
 knitr::knit_hooks$set(small.mar=function(before, options, envir) {
@@ -90,13 +93,30 @@ class: center, middle, inverse
 
 ---
 
-## `apply()` functions
+## Lists and Implicit looping
 
-* To traverse the data, R uses the apply functions.
-* `apply()`.
-* `lapply()`.
-* `sapply()`.
-* `tapply()`
+* `split()`
+
+R provides a more compact way to iterate over lists, and other objects, by using
+functions for implicit looping: 
+
+* `lapply()` returns a list with the same length as the input, where each element
+  is the result of the applied function.
+* `sapply()` attempts to simplify the resulting data structure, returning a 
+  vector if the length of each list element is 1.
+
+---
+
+## Lists and Implicit looping
+
+<!-- TODO: Example of loop... Super long. With sapply and lists is very short! -->
+
+```{r}
+summary(iris)
+sepal_list <- split(iris$Sepal.Length, iris$Species)
+sapply(sepal_list, mean)
+```
+
 
 ---
 
@@ -107,6 +127,8 @@ class: center, middle, inverse
   &nbsp;&nbsp;
 * Vectorized operations are much faster than loops.  
   &nbsp;&nbsp;
+* Lists and implicit looping are a very efficient way to apply functions to 
+  specific groups of data.
   
 ---
 class: center, middle, inverse
@@ -117,8 +139,25 @@ class: center, middle, inverse
 
 ## Add columns to data frames
 
-* Add new columns with `$`.
+* Add new columns with `$` followed by the name of the column and assigning the
+value you want. 
 
+* You can perform operations with columns and other columns and/or vectors and 
+store the result in a new column.
+
+  <pre>
+  > df <- data frame("A"=1:5,
+  +                  "B"=11:15)
+  > df$C <- df$A + df$B
+  > df$D <- df$C / 2
+  > df
+    A  B  C  D
+  1 1 11 12  6
+  2 2 12 14  7
+  3 3 13 16  8
+  4 4 14 18  9
+  5 5 15 20 10
+  </pre>
 
 ---
 
@@ -146,38 +185,74 @@ class: center, middle, inverse
     longer object length is not a multiple of shorter object length
   </pre>
 
---- 
+
+---
 
 ## Sorting and ordering data
 
-* `sort()`
-* `order()`
+* In some cases we might be interested in sorting or ordering our objects. There
+are two main functions to do this:
+  * `sort()` allows to sort a vector into ascending or descending order.
+  * `order()` returns the indexes that allow rearringing a vector into ascending
+    or descending order. This function is specially usefull when sorting objects
+    like `data frames`.
+  
+  <pre>
+  > numbers <- round(runif(15, min=0, max=50))
+  > numbers
+   [1] 47 34 45 24 18  0  3  3 15 24 37 31 34 26  6
+  > sort(numbers, decreasing=FALSE)
+   [1]  0  3  3  6 15 18 24 24 2s6 31 34 34 37 45 47
+  > order(numbers, decreasing=FALSE)
+   [1]  6  7  8 15  9  5  4 10 14 12  2 13 11  3  1
+  </pre>
+    
+```{r eval=FALSE, include=FALSE}
+numbers <- round(runif(15, min=0, max=50))
+numbers
+sort(numbers, decreasing=FALSE)
+order(numbers, decreasing=FALSE)
+```
+
 
 ---
 
 ## Combining and Merging datasets
 
-* Datasets with the same shape can be combined using:
-  * `cbind()` to add columns. 
-  * `rbind()` to add rows.
+* Datasets with the same shape can be **pasted** using:
+  * `cbind()` to paste the columns of two `data frame`s. 
+  * `rbind()` to paste the rows of two `data frame`s.
+  
+  **Important!**: When pasting data you have to make sure that they have the
+  same dimensions and attributes. 
+
 * Datasets with the same shape can be combined using: 
-  * `merge()`, using common columns and rows (join)
   * `match()`, returns the matching positions of two vectors. 
+  
+```{r}
+genes1 <- c("SOCS1", "SOCS2", "IRF1", "IRF2", "STAT1", "STAT2")
+genes2 <- c("IRF4", "SOCS1", "STAT2", "IRF1")
+match(genes1, genes2)
+```
+
+  * `merge()`, _join_ data frames using common columns or row names. 
+  
+```{r}
+
+```
+  
 
 ---
 
-## The "join" concept
+## Different types of "join"
 
-* _Natural join_. Keep only rows that match in both data frames. 
-* _Full outer join_. Keep all rows from both data frames.
-* _Left outer join_. Include all rows from data frame `x` and only those from `y` that match.
-* _Right outer join_. Include all rows from data frame `y` and only those from `x` that match.
+Depending on your objective, you can merge data frames in different ways:
 
----
+  * _Natural join_. Keep only rows that match in both data frames (`all = FALSE`). 
+  * _Full outer join_. Keep all rows from both data frames (`all = TRUEs`).
+  * _Left outer join_. Include all rows from data frame `x` and only those from `y` that match (`all.x = TRUE`).
+  * _Right outer join_. Include all rows from data frame `y` and only those from `x` that match (`all.y = TRUE`).
 
-## Splitting data
-
-* `split()`
 
 ---
 class: center, middle, inverse
@@ -191,7 +266,8 @@ class: center, middle, inverse
 * The basic plotting function in R is `plot()`.
 
 ```{r example-plot, out.width="50%"}
-plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p", col=c("red", "blue", "green")[iris$Species]) # Only works when the variable is a FACTOR
+plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p", 
+     col=c("red", "blue", "green")[iris$Species]) # Only works when the variable is a FACTOR
 ```
 
 ---
