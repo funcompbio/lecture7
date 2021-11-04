@@ -13,9 +13,14 @@
 
 ```{r setup, include=FALSE, cache=FALSE}
 options(htmltools.dir.version = FALSE, width=80)
-knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache=FALSE,
+knitr::opts_chunk$set(warning = FALSE, 
+                      message = FALSE, 
+                      cache=FALSE,
                       comment="", 
-                      prompt=TRUE)
+                      prompt=TRUE,
+                      include=FALSE,
+                      echo=FALSE,
+                      fig.path = "img/")
 
 ## from http://yihui.name/knitr/hooks#chunk_hooks
 knitr::knit_hooks$set(small.mar=function(before, options, envir) {
@@ -95,24 +100,86 @@ class: center, middle, inverse
 
 ## Lists and Implicit looping
 
-* `split()`
+* In some cases we might still want to iterate through some specific elements.
 
-R provides a more compact way to iterate over lists, and other objects, by using
+* R provides a more compact way to iterate over lists, and other objects, by using
 functions for implicit looping: 
 
-* `lapply()` returns a list with the same length as the input, where each element
-  is the result of the applied function.
-* `sapply()` attempts to simplify the resulting data structure, returning a 
-  vector if the length of each list element is 1.
+  * `lapply()` returns a list with the same length as the input, where each element
+    is the result of the applied function.
+  * `sapply()` attempts to simplify the resulting data structure, returning a 
+    vector if the length of each list element is 1.
+
+* To use this approach we usually want to convert out data into a list to be able
+to iterate through it. The `split()` function is the most efficient way to do it,
+as it will split an object (vector, data frame) into the groups defined by a factor
+variable.
 
 ---
 
-## Lists and Implicit looping
+## Lists and Implicit looping: an example
 
-<!-- TODO: Example of loop... Super long. With sapply and lists is very short! -->
+<pre>
+> head(iris)
+  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+1          5.1         3.5          1.4         0.2  setosa
+2          4.9         3.0          1.4         0.2  setosa
+3          4.7         3.2          1.3         0.2  setosa
+4          4.6         3.1          1.5         0.2  setosa
+5          5.0         3.6          1.4         0.2  setosa
+6          5.4         3.9          1.7         0.4  setosa
+> levels(iris$Species)
+[1] "setosa"     "versicolor" "virginica" 
+</pre>
+
+
+---
+
+## Lists and Implicit looping: an example
+
+<pre>
+> ## Long way
+> means_all <- c()
+> for (i in levels(iris$Species)) {
++     mask <- iris$Species == i
++     sepal_lengths <- iris$Sepal.Length[mask]
++     mean <- mean(sepal_lengths)
++     means_all <- c(means_all, mean)
++ }
+> names(means_all) <- levels(iris$Species)
+> means_all
+    setosa versicolor  virginica 
+     5.006      5.936      6.588 
+</pre>
+
+---
+
+## Lists and Implicit looping: an example
+
+<pre>
+> ## Short way
+> sepal_list <- split(iris$Sepal.Length, iris$Species)
+> sapply(sepal_list, mean)
+    setosa versicolor  virginica 
+     5.006      5.936      6.588 
+</pre>
 
 ```{r}
-summary(iris)
+head(iris)
+levels(iris$Species)
+
+## Long way
+means_all <- c()
+for (i in levels(iris$Species)) {
+  mask <- iris$Species == i
+  sepal_lengths <- iris$Sepal.Length[mask]
+  mean <- mean(sepal_lengths)
+  means_all <- c(means_all, mean)
+}
+names(means_all) <- levels(iris$Species)
+means_all
+
+## Short way
 sepal_list <- split(iris$Sepal.Length, iris$Species)
 sapply(sepal_list, mean)
 ```
@@ -146,17 +213,17 @@ value you want.
 store the result in a new column.
 
   <pre>
-  > df <- data frame("A"=1:5,
-  +                  "B"=11:15)
+  > df <- data.frame("A"=11:15,
+  +                  "B"=21:25)
   > df$C <- df$A + df$B
   > df$D <- df$C / 2
   > df
-    A  B  C  D
-  1 1 11 12  6
-  2 2 12 14  7
-  3 3 13 16  8
-  4 4 14 18  9
-  5 5 15 20 10
+     A  B  C  D
+  1 11 21 32 16
+  2 12 22 34 17
+  3 13 23 36 18
+  4 14 24 38 19
+  5 15 25 40 20
   </pre>
 
 ---
@@ -190,24 +257,29 @@ store the result in a new column.
 
 ## Sorting and ordering data
 
-* In some cases we might be interested in sorting or ordering our objects. There
-are two main functions to do this:
-  * `sort()` allows to sort a vector into ascending or descending order.
-  * `order()` returns the indexes that allow rearringing a vector into ascending
-    or descending order. This function is specially usefull when sorting objects
-    like `data frames`.
-  
+* In some cases we might be interested in sorting or ordering our objects. 
   <pre>
   > numbers <- round(runif(15, min=0, max=50))
   > numbers
    [1] 47 34 45 24 18  0  3  3 15 24 37 31 34 26  6
-  > sort(numbers, decreasing=FALSE)
-   [1]  0  3  3  6 15 18 24 24 2s6 31 34 34 37 45 47
-  > order(numbers, decreasing=FALSE)
-   [1]  6  7  8 15  9  5  4 10 14 12  2 13 11  3  1
   </pre>
-    
-```{r eval=FALSE, include=FALSE}
+  
+* There are two main functions to do this:
+  * `sort()` allows to sort a vector into ascending or descending order.
+    <pre>
+    > sort(numbers, decreasing=FALSE)
+    [1]  0  3  3  6 15 18 24 24 2s6 31 34 34 37 45 47
+    </pre>
+  
+  * `order()` returns the indexes that allow rearranging a vector into ascending
+    or descending order. This function is specially useful when sorting objects
+    like `data frames`.
+    <pre>
+    > order(numbers, decreasing=FALSE)
+    [1]  6  7  8 15  9  5  4 10 14 12  2 13 11  3  1
+    </pre>
+
+```{r}
 numbers <- round(runif(15, min=0, max=50))
 numbers
 sort(numbers, decreasing=FALSE)
@@ -217,41 +289,206 @@ order(numbers, decreasing=FALSE)
 
 ---
 
-## Combining and Merging datasets
+## Pasting rows and columns into datasets
 
-* Datasets with the same shape can be **pasted** using:
-  * `cbind()` to paste the columns of two `data frame`s. 
-  * `rbind()` to paste the rows of two `data frame`s.
+* Several rows and columns can be _pasted_ into a data frame using:
+  * `cbind()` to paste columns.
   
-  **Important!**: When pasting data you have to make sure that they have the
-  same dimensions and attributes. 
+    <pre>
+    > data_1 <- data.frame(x1 = c(7, 3, 2, 9, 0),
+    +                      x2 = c(4, 4, 1, 1, 8),
+    +                      x3 = c(5, 3, 9, 2, 4))
+    > data_2 <- data.frame(z1 = c(1, 5, 9, 4, 0),
+    +                      z2 = c(0, 9, 8, 1, 6))
+    > cbind(data_1, data_2)
+      x1 x2 x3 z1 z2
+    1  7  4  5  1  0
+    2  3  4  3  5  9
+    3  2  1  9  9  8
+    4  9  1  2  4  1
+    5  0  8  4  0  6
+    </pre>
 
-* Datasets with the same shape can be combined using: 
+`r emo::ji("warning")` __Important__: When pasting data you have to make sure 
+that they have the same dimensions, that is same number of rows for pasting 
+columns (`cbind`) and same column numbers and names for pasting rows (`rbind`).
+
+---
+
+## Pasting rows and columns into datasets
+
+* Several rows and columns can be _pasted_ into a data frame using:
+  
+  * `rbind()` to paste rows.
+  
+  <pre>
+  > data_3 <- data.frame(x1 = c(3, 1),
+  +                      x2 = c(5, 8),
+  +                      x3 = c(1, 6))
+  > rbind(data_1, data_3)
+    x1 x2 x3
+  1  7  4  5
+  2  3  4  3
+  3  2  1  9
+  4  9  1  2
+  5  0  8  4
+  6  3  5  1
+  7  1  8  6
+  </pre>
+
+  
+```{r}
+data_1 <- data.frame(x1 = c(7, 3, 2, 9, 0),
+                     x2 = c(4, 4, 1, 1, 8),
+                     x3 = c(5, 3, 9, 2, 4))
+data_2 <- data.frame(z1 = c(1, 5, 9, 4, 0),
+                     z2 = c(0, 9, 8, 1, 6))
+cbind(data_1, data_2)
+
+data_3 <- data.frame(x1 = c(3, 1),
+                     x2 = c(5, 8),
+                     x3 = c(1, 6))
+rbind(data_1, data_3)
+```
+
+`r emo::ji("warning")` __Important__: When pasting data you have to make sure 
+that they have the same dimensions, that is same number of rows for pasting 
+columns (`cbind`) and same column numbers and names for pasting rows (`rbind`).
+
+---
+
+## Combining datasets: `match()`
+
+* Datasets with the different shapes can be _combined_ using: 
   * `match()`, returns the matching positions of two vectors. 
   
+  <pre>
+  > genes1 <- c("SOCS1", "SOCS2", "IRF1", "IRF2", "STAT1", "STAT2")
+  > genes2 <- c("IRF4", "SOCS1", "STAT2", "IRF1")
+  > match(genes1, genes2)
+  [1]  2 NA  4 NA NA  3
+  </pre>
+
 ```{r}
 genes1 <- c("SOCS1", "SOCS2", "IRF1", "IRF2", "STAT1", "STAT2")
 genes2 <- c("IRF4", "SOCS1", "STAT2", "IRF1")
 match(genes1, genes2)
 ```
 
-  * `merge()`, _join_ data frames using common columns or row names. 
-  
-```{r}
-
-```
-  
-
 ---
 
-## Different types of "join"
+## Combining datasets: `merge()`
+
+* Datasets with the different shapes can be _combined_ using: 
+  * `merge()`, _join_ data frames using common columns or row names. If there 
+  are matching colnames, they will be automatically used for merging the data. 
+  If not, the columns to use for merging need to be specified using the arguments
+  `by.x` and `by.y`.
+
+  <pre>
+  > cases <- data.frame(month=c("Apr", "May", "Jun"),
+  +                     cases=c(500, 200, 300))
+  > deaths <- data.frame(date=c("Apr", "Jun", "Jul"),
+  +                      deats=c(30, 10, 20))
+  > merge(cases, deaths, by.x="month", by.y="date")
+    month cases deats
+  1   Apr   500    30
+  2   Jun   300    10
+  </pre>
+
+```{r}
+cases <- data.frame(month=c("Apr", "May", "Jun"),
+                    cases=c(500, 200, 300))
+deaths <- data.frame(date=c("Apr", "Jun", "Jul"),
+                     deats=c(30, 10, 20))
+
+cases
+deaths
+
+merge(cases, deaths, by.x="month", by.y="date")
+```
+  
+---
+
+## Different types of "joining" using `merge()`
 
 Depending on your objective, you can merge data frames in different ways:
 
   * _Natural join_. Keep only rows that match in both data frames (`all = FALSE`). 
-  * _Full outer join_. Keep all rows from both data frames (`all = TRUEs`).
+    This is the default method in the `merge()` function.
+    
+    <pre>
+    > merge(cases, deaths, by.x="month", by.y="date", all=FALSE)
+      month cases deats
+    1   Apr   500    30
+    2   Jun   300    10
+    </pre>
+  
+```{r}
+merge(cases, deaths, by.x="month", by.y="date", all=FALSE)
+```
+
+  * _Full outer join_. Keep all rows from both data frames (`all = TRUE`).
+  
+    <pre>
+    > merge(cases, deaths, by.x="month", by.y="date", all=TRUE)
+      month cases deats
+    1   Apr   500    30
+    2   Jul    NA    20
+    3   Jun   300    10
+    4   May   200    NA
+    </pre>
+  
+```{r}
+merge(cases, deaths, by.x="month", by.y="date", all=TRUE)
+```
+
+---
+
+## Different types of "joining" using `merge()`
+
   * _Left outer join_. Include all rows from data frame `x` and only those from `y` that match (`all.x = TRUE`).
+
+    <pre>
+    > merge(cases, deaths, by.x="month", by.y="date", all.x=TRUE)
+      month cases deats
+    1   Apr   500    30
+    2   Jun   300    10
+    3   May   200    NA    
+    </pre>
+  
+```{r}
+merge(cases, deaths, by.x="month", by.y="date", all.x=TRUE)
+```  
+  
   * _Right outer join_. Include all rows from data frame `y` and only those from `x` that match (`all.y = TRUE`).
+  
+    <pre>
+    > merge(cases, deaths, by.x="month", by.y="date", all.y=TRUE)
+      month cases deats
+    1   Apr   500    30
+    2   Jul    NA    20
+    3   Jun   300    10
+    </pre>
+
+```{r}
+merge(cases, deaths, by.x="month", by.y="date", all.y=TRUE)
+```  
+
+---
+
+## Concluding remarks
+
+* Adding new columns and performing operations using columns and vectors is
+  straightforward, but remember the recycling rule.
+  
+* We can order vectors (`sort`) and data frames (`order`).
+  
+* We we want to add new columns or rows to a data frame we can take advantage of
+  the `cbind` and `rbind` functions. 
+  
+* When we want to combine two data frames with different dimensions, we can 
+  use `merge` and specify the column we want to use for combining the data.
 
 
 ---
@@ -265,19 +502,151 @@ class: center, middle, inverse
 
 * The basic plotting function in R is `plot()`.
 
-```{r example-plot, out.width="50%"}
+* The first element (`x`) is what will be represented in the x axis and the 
+  second element (`y`) what will be shown in the y axis.
+  
+* You can specify the type of plot that should be drawn using the argument `type`.
+  Some examples are: `type = "p"` for points, `type = "l"` for lines or `type="b"`
+  for both.
+
+  <pre>
+  plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p") 
+  </pre>
+
+```{r example-plot, out.width="70%", include=TRUE, fig.asp=.6}
+plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p")
+```
+
+---
+
+## Modifying plot graphical parameters
+
+* There are many graphical parameters that can be changed to make the plots more
+  attractive, such as the axis labels or the coloring. 
+  
+* A list can be found at the `plot()` function documentation: `?graphics::plot`
+
+  <pre>
+  plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p", 
+       xlab = "Iris sepal length", ylab = "Iris sepal width",
+       pch = 19, cex = 1.5,
+       col=c("red", "blue", "green")[iris$Species])
+  </pre>
+
+```{r example-plot-mod, out.width="70%", include=TRUE, fig.asp=.6}
 plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p", 
+     xlab = "Iris sepal length", ylab = "Iris sepal width",
+     main = "Scatterplot",
+     pch = 19, cex = 1.5,
      col=c("red", "blue", "green")[iris$Species]) # Only works when the variable is a FACTOR
 ```
+
+---
+
+## Modifying plot graphical parameters
+
+* `xlab` and `ylab`. Titles for the x and y axes, respectively.  
+* `main`. Title for the plot.
+* `pch`. Shape of the points (full description at `? pch`)
+
+![](img/pch.png)
+
+* `cex`. Number indicating how much the symbols should be scaled relative to the
+  default.
+* `col`. Colors for the lines and points. You can specify a single or multiple 
+  colors (one for each point).
 
 ---
 
 ## Other types of plots
 
 * `barplot()`
-* `histogram()`
+
+  <pre>
+  barplot(table(iris$Species), col=2:4)
+  </pre>
+
+```{r barplot-example, include=TRUE, out.width="60%"}
+barplot(table(iris$Species), col=2:4)
+```
+
+
+---
+
+## Other types of plots
+
+
 * `boxplot()`
 
+  <pre>
+  boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, xlab = "Species", ylab = "Sepal length")
+  </pre>
+
+```{r boxplot-example, include=TRUE, out.width="60%"}
+boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, xlab = "Species", ylab = "Sepal length")
+```
 
 
+---
 
+## Combine plots using `par()`
+
+* Using the argument `mfrow = c(nr, nc)`, where `nr` are the number of rows and
+  `nc` the number of columns you want to divide your device into.
+
+```{r combine-plots, include=TRUE, out.width="90%", fig.asp=.6}
+par(mfrow=c(1,2))
+barplot(table(iris$Species), col=2:4, cex.names=.9)
+boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, xlab = "Species", ylab = "Sepal length", cex.axis=.85)
+```
+
+---
+
+## Concluding remarks
+
+* Plotting is fun!
+
+---
+
+## Bonus track: the `Tidyverse`
+
+The [tidyverse](https://www.tidyverse.org/) is an opinionated collection of R 
+packages designed for data science. All packages share an underlying design 
+philosophy, grammar, and data structures.
+
+```{r, out.width="10%", include=TRUE}
+knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/2c6239d311be6d037c251c71c3902792f8c4ddd2/12f67/css/images/hex/ggplot2.png")
+```
+
+* _[ggplot2](https://ggplot2.tidyverse.org/)_. System for declaratively creating
+  graphics, based on The Grammar of Graphics. You provide the data, tell ggplot2
+  how to map variables to aesthetics, what graphical primitives to use, and it 
+  takes care of the details. 
+  
+```{r, out.width="10%", include=TRUE}
+knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/621a9c8c5d7b47c4b6d72e8f01f28d14310e8370/193fc/css/images/hex/dplyr.png")
+```
+
+* _[dplyr](https://dplyr.tidyverse.org/)_. Provides a grammar of data manipulation, 
+  providing a consistent set of verbs that solve the most common data manipulation 
+  challenges. 
+
+---
+
+## Bonus track: the `Tidyverse`
+
+The [tidyverse](https://www.tidyverse.org/) is an opinionated collection of R 
+packages designed for data science. All packages share an underlying design 
+philosophy, grammar, and data structures.
+
+
+```{r, out.width="10%", include=TRUE}
+knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/476fa4025501dcec05be08248b32d390dd2337d5/574c6/css/images/hex/tidyr.png")
+```
+
+* _[tidyr](https://tidyr.tidyverse.org/)_. Provides a set of functions that help 
+  you get to tidy data. Tidy data is data with a consistent form: in brief, every 
+  variable goes in a column, and every column is a variable. 
+
+
+> Online book [R for Data Science](https://r4ds.had.co.nz) by [Hadley Wickham](http://hadley.nz).
