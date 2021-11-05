@@ -560,14 +560,20 @@ plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p",
 
 ## Other types of plots
 
-* `barplot()`
+* A _barplot_ is used to represent a categorical variable such as a factor in the 
+  x axis and a numeric value in the y axis. 
+
+* The function `barplot()` creates a bar plot with vertical or horizontal bars by
+  just providing their height as a vector. The vector names will be used to plot
+  the x axis labels.
 
   <pre>
-  barplot(table(iris$Species), col=2:4)
+  barplot(table(iris$Species), col=2:4, 
+          xlab="Species", ylab="Number of observations")
   </pre>
 
-```{r barplot-example, include=TRUE, out.width="60%"}
-barplot(table(iris$Species), col=2:4)
+```{r barplot-example, include=TRUE, out.width="50%", fig.asp=.85}
+barplot(table(iris$Species), col=2:4, xlab="Species", ylab="Number of observations")
 ```
 
 
@@ -575,15 +581,21 @@ barplot(table(iris$Species), col=2:4)
 
 ## Other types of plots
 
-
-* `boxplot()`
+* A _boxplot_ is used to plot the distribution of a continuous (numeric) variable
+  over different groups (factors). 
+  
+* The function `boxplot()` produces this specific plot, by providing a formula 
+  `y ~ grp`, where`y` is a numeric vector and `grp` is a grouping variable 
+  (usually a factor).
 
   <pre>
-  boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, xlab = "Species", ylab = "Sepal length")
+  boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, 
+          xlab = "Species", ylab = "Sepal length")
   </pre>
 
-```{r boxplot-example, include=TRUE, out.width="60%"}
-boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, xlab = "Species", ylab = "Sepal length")
+```{r boxplot-example, include=TRUE, out.width="50%", fig.asp=.85}
+boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, 
+        xlab = "Species", ylab = "Sepal length")
 ```
 
 
@@ -591,49 +603,60 @@ boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, xlab = "Species", ylab = "Sep
 
 ## Combine plots using `par()`
 
-* Using the argument `mfrow = c(nr, nc)`, where `nr` are the number of rows and
-  `nc` the number of columns you want to divide your device into.
+* The function `par()` allows setting or inquiring about some specific graphical
+  parameters, explained in the help section `?par`.
 
-```{r combine-plots, include=TRUE, out.width="90%", fig.asp=.6}
+* We can specify the number of subplots we need using the argument `mfrow = c(nr, nc)`, 
+  where `nr` are the number of rows and nc` the number of columns you want to 
+  divide your device into.
+
+
+```{r combine-plots, include=TRUE, out.width="90%", fig.asp=.5}
 par(mfrow=c(1,2))
 barplot(table(iris$Species), col=2:4, cex.names=.9)
-boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, xlab = "Species", ylab = "Sepal length", cex.axis=.85)
+boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, cex.axis=.85)
 ```
+
 
 ---
 
 ## Concluding remarks
 
-* Plotting is fun!
+* There are different functions to produce plots in R. The one you use will 
+  depend on the type of data you have. 
+  
+* Additional graphical parameters can be modified by providing them as 
+  arguments to the plotting functions.
+  
+* You can combine plots side-by-side by using the function _par()_.
 
 ---
 
-## Bonus track: the `Tidyverse`
+## Bonus track: the Tidyverse
 
 The [tidyverse](https://www.tidyverse.org/) is an opinionated collection of R 
 packages designed for data science. All packages share an underlying design 
 philosophy, grammar, and data structures.
 
-```{r, out.width="10%", include=TRUE}
+```{r hex-ggplot2, out.width="10%", include=TRUE}
 knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/2c6239d311be6d037c251c71c3902792f8c4ddd2/12f67/css/images/hex/ggplot2.png")
 ```
 
-* _[ggplot2](https://ggplot2.tidyverse.org/)_. System for declaratively creating
+* _[ggplot2](https://ggplot2.tidyverse.org/)_. System for creating
   graphics, based on The Grammar of Graphics. You provide the data, tell ggplot2
-  how to map variables to aesthetics, what graphical primitives to use, and it 
-  takes care of the details. 
+  how to map variables to aesthetics and it takes care of the details. 
   
 ```{r, out.width="10%", include=TRUE}
 knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/621a9c8c5d7b47c4b6d72e8f01f28d14310e8370/193fc/css/images/hex/dplyr.png")
 ```
 
 * _[dplyr](https://dplyr.tidyverse.org/)_. Provides a grammar of data manipulation, 
-  providing a consistent set of verbs that solve the most common data manipulation 
+  with a consistent set of verbs that solve the most common data manipulation 
   challenges. 
 
 ---
 
-## Bonus track: the `Tidyverse`
+## Bonus track: the Tidyverse
 
 The [tidyverse](https://www.tidyverse.org/) is an opinionated collection of R 
 packages designed for data science. All packages share an underlying design 
@@ -650,3 +673,5 @@ knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/476fa4025501dcec0
 
 
 > Online book [R for Data Science](https://r4ds.had.co.nz) by [Hadley Wickham](http://hadley.nz).
+
+
