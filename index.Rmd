@@ -24,7 +24,7 @@ knitr::opts_chunk$set(warning = FALSE,
 
 ## from http://yihui.name/knitr/hooks#chunk_hooks
 knitr::knit_hooks$set(small.mar=function(before, options, envir) {
-                                              if (before) par(mar=c(4, 5, 1, 1)) ## smaller margin on top and right
+                        if (before) par(mar=c(4, 5, 1, 1)) ## smaller margin on top and right
 })
 ```
 
@@ -483,20 +483,19 @@ merge(datinc, datpop)
 * Analyzing data involves so-called
   [data wrangling](https://en.wikipedia.org/wiki/Data_wrangling)
   steps in which we may have to reorder data, paste rows and columns,
-  combine datasets or add new columns.
-
+  combine datasets or add new columns.  
+  &nbsp;&nbsp;
 * The recycling rule is a powerful feature, but beware of situations
-  in which it may be unintentionally applied.
-
-* It is important to understand the difference between `sort` and `order`.
-
-* Pasting rows and columns is straightforward with `rbind()` and `cbind()`.
-  
+  in which it may be unintentionally applied.  
+  &nbsp;&nbsp;
+* It is important to understand the difference between `sort` and `order`.  
+  &nbsp;&nbsp;
+* Pasting rows and columns is straightforward with `rbind()` and `cbind()`.  
+  &nbsp;&nbsp;
 * Most of the times, we will be interested in the _natural join_ operation,
   in which we combine rows from two datasets with **matching values in a common
   column**. This can be achieved either with the `match()` function or the
   `merge()` function with default parameters.
-
 
 ---
 class: center, middle, inverse
@@ -507,19 +506,17 @@ class: center, middle, inverse
 
 ## Generic plot types in R
 
-* The basic plotting function in R is `plot()`.
-
+* The basic plotting function in R is `plot()`.  
+  &nbsp;&nbsp;
 * The first element (`x`) is what will be represented in the x axis and the 
-  second element (`y`) what will be shown in the y axis.
-  
+  second element (`y`) what will be shown in the y axis.  
+  &nbsp;&nbsp;
 * You can specify the type of plot that should be drawn using the argument `type`.
   Some examples are: `type = "p"` for points, `type = "l"` for lines or `type="b"`
   for both.
-
   <pre>
   plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p") 
   </pre>
-
 ```{r example-plot, out.width="70%", include=TRUE, fig.asp=.6}
 plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p")
 ```
@@ -529,15 +526,14 @@ plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p")
 ## Modifying plot graphical parameters
 
 * There are many graphical parameters that can be changed to make the plots more
-  attractive, such as the axis labels or the coloring. 
-  
+  attractive, such as the axis labels or the coloring.  
+  &nbsp;&nbsp;
 * A list can be found at the `plot()` function documentation: `?graphics::plot`
-
   <pre>
-  plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p", 
-       xlab = "Iris sepal length", ylab = "Iris sepal width",
-       pch = 19, cex = 1.5,
-       col=c("red", "blue", "green")[iris$Species])
+  plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p",
+         xlab = "Iris sepal length", ylab = "Iris sepal width",
+         pch = 19, cex = 1.5,
+         col=c("red", "blue", "green")[iris$Species])
   </pre>
 
 ```{r example-plot-mod, out.width="70%", include=TRUE, fig.asp=.6}
@@ -553,13 +549,16 @@ plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p",
 ## Modifying plot graphical parameters
 
 * `xlab` and `ylab`. Titles for the x and y axes, respectively.  
-* `main`. Title for the plot.
+  &nbsp;&nbsp;
+* `main`. Title for the plot.  
+  &nbsp;&nbsp;
 * `pch`. Shape of the points (full description at `? pch`)
 
 ![](img/pch.png)
 
 * `cex`. Number indicating how much the symbols should be scaled relative to the
-  default.
+  default.  
+  &nbsp;&nbsp;
 * `col`. Colors for the lines and points. You can specify a single or multiple 
   colors (one for each point).
 
@@ -568,15 +567,14 @@ plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p",
 ## Other types of plots
 
 * A _barplot_ is used to represent a categorical variable such as a factor in the 
-  x axis and a numeric value in the y axis. 
-
+  x axis and a numeric value in the y axis.  
+  &nbsp;&nbsp;
 * The function `barplot()` creates a bar plot with vertical or horizontal bars by
   just providing their height as a vector. The vector names will be used to plot
   the x axis labels.
-
   <pre>
   barplot(table(iris$Species), col=2:4, 
-          xlab="Species", ylab="Number of observations")
+            xlab="Species", ylab="Number of observations")
   </pre>
 
 ```{r barplot-example, include=TRUE, out.width="50%", fig.asp=.85}
@@ -589,15 +587,14 @@ barplot(table(iris$Species), col=2:4, xlab="Species", ylab="Number of observatio
 ## Other types of plots
 
 * A _boxplot_ is used to plot the distribution of a continuous (numeric) variable
-  over different groups (factors). 
-  
+  over different groups (factors).  
+  &nbsp;&nbsp;
 * The function `boxplot()` produces this specific plot, by providing a formula 
   `y ~ grp`, where`y` is a numeric vector and `grp` is a grouping variable 
   (usually a factor).
-
   <pre>
   boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, 
-          xlab = "Species", ylab = "Sepal length")
+            xlab = "Species", ylab = "Sepal length")
   </pre>
 
 ```{r boxplot-example, include=TRUE, out.width="50%", fig.asp=.85}
@@ -611,14 +608,18 @@ boxplot(iris$Sepal.Length ~ iris$Species, col=2:4,
 ## Combine plots using `par()`
 
 * The function `par()` allows setting or inquiring about some specific graphical
-  parameters, explained in the help section `?par`.
-
+  parameters, explained in the help section `?par`.  
+  &nbsp;&nbsp;
 * We can specify the number of subplots we need using the argument `mfrow = c(nr, nc)`, 
   where `nr` are the number of rows and nc` the number of columns you want to 
   divide your device into.
+  <pre>
+  par(mfrow=c(1,2))
+  barplot(table(iris$Species), col=2:4, cex.names=.9)
+  boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, cex.axis=.85)
+  </pre>
 
-
-```{r combine-plots, include=TRUE, out.width="90%", fig.asp=.5}
+```{r combine-plots, include=TRUE, out.width="70%", fig.asp=.5, small.mar=TRUE}
 par(mfrow=c(1,2))
 barplot(table(iris$Species), col=2:4, cex.names=.9)
 boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, cex.axis=.85)
@@ -630,11 +631,11 @@ boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, cex.axis=.85)
 ## Concluding remarks
 
 * There are different functions to produce plots in R. The one you use will 
-  depend on the type of data you have. 
-  
+  depend on the type of data you have.  
+  &nbsp;&nbsp;
 * Additional graphical parameters can be modified by providing them as 
-  arguments to the plotting functions.
-  
+  arguments to the plotting functions.  
+  &nbsp;&nbsp;
 * You can combine plots side-by-side by using the function _par()_.
 
 ---
