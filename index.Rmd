@@ -32,7 +32,8 @@ class: title-slide, middle, center
 
 # Data manipulation and plotting with R
 
-## Mireia Ramos
+## Robert Castelo & Mireia Ramos
+[robert.castelo@upf.edu](mailto:robert.castelo@upf.edu)
 [mireia.ramos@upf.edu](mailto:mireia.ramos@upf.edu)
 ### Dept. of Experimental and Health Sciences
 ### Universitat Pompeu Fabra
@@ -55,25 +56,25 @@ class: center, middle, inverse
 
 * Sequentially evaluated statements may be written one below another using
   newlines or in the same line separated by semicolons (`;`):
-  <pre>
-  i <- 1 ; j <- 0
-  </pre>
+<pre>
+i <- 1 ; j <- 0
+</pre>
 * Conditional and looping statements have the condition surrounded by
-  parentheses `( )` and the associated code by braces `{ }`, except if it
-  consists of a single line.
-  <pre>
-  if (i > 0)
-      j <- i * 10
-
-  while (i < j) {
-      i <- i + 1
-      print(i)
-  }
-  for (i in 1:10) {
-      j <- j + i
-      print(j)
-  }
-  </pre>
+  parentheses `( )` and the associated code by braces `{ }` (except in single lines).
+<pre>
+if (i > 0)
+&nbsp;&nbsp;j <- i * 10
+&nbsp;&nbsp;
+while (i < j) {
+&nbsp;&nbsp;i <- i + 1
+&nbsp;&nbsp;print(i)
+}
+&nbsp;&nbsp;
+for (i in 1:10) {
+&nbsp;&nbsp;j <- j + i
+&nbsp;&nbsp;print(j)
+}
+</pre>
 
 ---
 
@@ -100,28 +101,33 @@ class: center, middle, inverse
 
 ## Lists and Implicit looping
 
-* In some cases we might still want to iterate through some specific elements.
-
+* In some cases we might still want to iterate through some specific elements.  
+  &nbsp;&nbsp;
 * R provides a more compact way to iterate over lists, and other objects, by using
-functions for implicit looping: 
-
+  functions for implicit looping:
   * `lapply()` returns a list with the same length as the input, where each element
     is the result of the applied function.
   * `sapply()` attempts to simplify the resulting data structure, returning a 
     vector if the length of each list element is 1.
-
 * To use this approach we usually want to convert out data into a list to be able
-to iterate through it. The `split()` function is the most efficient way to do it,
-as it will split an object (vector, data frame) into the groups defined by a factor
-variable.
+  to iterate through it. The `split()` function is the most efficient way to do it,
+  as it will split an object (vector, data frame) into the groups defined by a factor
+  variable.
 
 ---
 
 ## Lists and Implicit looping: an example
 
+* In every R session you can access by default a `data.frame` object called `iris`
+corresponding to a classical data set on the taxonomic characteristics of flowers
+used by
+[Fisher (1936)](https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1469-1809.1936.tb02137.x)
+to introduce certain statistical concepts. It contains measurements of the flowers of
+fifty plants for each of the three species _Iris setosa_, _Iris versicolor_ and
+_Iris virginica_.
 <pre>
 > head(iris)
-  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+      Sepal.Length Sepal.Width Petal.Length Petal.Width Species
 1          5.1         3.5          1.4         0.2  setosa
 2          4.9         3.0          1.4         0.2  setosa
 3          4.7         3.2          1.3         0.2  setosa
@@ -137,31 +143,36 @@ variable.
 
 ## Lists and Implicit looping: an example
 
+* Long way, using explicit looping:
 <pre>
-> ## Long way
 > means_all <- c()
+&nbsp;&nbsp;
 > for (i in levels(iris$Species)) {
-+     mask <- iris$Species == i
-+     sepal_lengths <- iris$Sepal.Length[mask]
-+     mean <- mean(sepal_lengths)
-+     means_all <- c(means_all, mean)
-+ }
+&nbsp;&nbsp;mask <- iris$Species == i
+&nbsp;&nbsp;sepal_lengths <- iris$Sepal.Length[mask]
+&nbsp;&nbsp;mean <- mean(sepal_lengths)
+&nbsp;&nbsp;means_all <- c(means_all, mean)
+}
+&nbsp;&nbsp;
 > names(means_all) <- levels(iris$Species)
+&nbsp;&nbsp;
 > means_all
-    setosa versicolor  virginica 
-     5.006      5.936      6.588 
+  setosa versicolor  virginica 
+   5.006      5.936      6.588 
 </pre>
 
 ---
 
 ## Lists and Implicit looping: an example
 
+* Short way, using **implicit** looping:
+
 <pre>
-> ## Short way
 > sepal_list <- split(iris$Sepal.Length, iris$Species)
+&nbsp;&nbsp;
 > sapply(sepal_list, mean)
-    setosa versicolor  virginica 
-     5.006      5.936      6.588 
+  setosa versicolor  virginica 
+   5.006      5.936      6.588 
 </pre>
 
 ```{r}
@@ -197,34 +208,126 @@ sapply(sepal_list, mean)
 * Lists and implicit looping are a very efficient way to apply functions to 
   specific groups of data.
   
+
 ---
 class: center, middle, inverse
 
 # Data manipulation
 
+
 ---
 
-## Add columns to data frames
+## Sorting and ordering data
 
-* Add new columns with `$` followed by the name of the column and assigning the
-value you want. 
-
-* You can perform operations with columns and other columns and/or vectors and 
-store the result in a new column.
-
+* In some cases we might be interested in sorting or ordering our objects. 
   <pre>
-  > df <- data.frame("A"=11:15,
-  +                  "B"=21:25)
-  > df$C <- df$A + df$B
-  > df$D <- df$C / 2
-  > df
-     A  B  C  D
-  1 11 21 32 16
-  2 12 22 34 17
-  3 13 23 36 18
-  4 14 24 38 19
-  5 15 25 40 20
+  > numbers <- round(runif(15, min=0, max=50))
+  > numbers
+   [1] 47 34 45 24 18  0  3  3 15 24 37 31 34 26  6
   </pre>
+* There are two main functions to do this:
+  * `sort()` allows to sort a vector into ascending or descending order.
+    <pre>
+    > sort(numbers, decreasing=FALSE)
+    [1]  0  3  3  6 15 18 24 24 26 31 34 34 37 45 47
+    </pre>
+  * `order()` returns a permutation of the positions of the input vector that
+    is typically used to rearrange a vector into ascending or descending order,
+    as well as the rows or columns of `matrix` and `data.frame` objects.
+    <pre>
+    > order(numbers, decreasing=FALSE)
+    [1]  6  7  8 15  9  5  4 10 14 12  2 13 11  3  1
+    </pre>
+
+```{r}
+numbers <- round(runif(15, min=0, max=50))
+numbers
+sort(numbers, decreasing=FALSE)
+order(numbers, decreasing=FALSE)
+```
+
+
+---
+
+## Sorting and ordering data
+
+* Example of using `order()` to sort the rows of a `data.frame` object:
+<pre>
+> dat1 <- data.frame(COUNTY=c("OSONA", "MARESME", "SEGRIA"),
+                         POPULATION=c(180364, 506901, 233615))
+> dat1
+       COUNTY POPULATION
+1   OSONA     180364
+2 MARESME     506901
+3  SEGRIA     233615
+> dat1[order(dat1$COUNTY), ]
+       COUNTY POPULATION
+2 MARESME     506901
+1   OSONA     180364
+3  SEGRIA     233615
+> dat1[order(dat1$POPULATION), ]
+       COUNTY POPULATION
+1   OSONA     180364
+3  SEGRIA     233615
+2 MARESME     506901
+</pre>
+
+
+---
+
+## Pasting rows and columns
+
+* Several rows and columns can be _pasted_ into a data frame using:
+  * `cbind()` to paste columns.
+    <pre>
+    > dat2 <- data.frame(COUNTY=c("OSONA", "MARESME", "SEGRIA"),
+                             VACCINATION=c(119624, 343637, 156648))
+    > dat3 <- cbind(dat1, VACCINATION=dat2[, "VACCINATION"])
+    > dat3
+           COUNTY POPULATION VACCINATION
+    1   OSONA     180364      119624
+    2 MARESME     506901      343637
+    3  SEGRIA     233615      156648
+    </pre>
+
+`r emo::ji("warning")` __Important__: When pasting data you have to make sure 
+that they have the same dimensions. In the case of pasting columns with `cbind`,
+`data.frame` objects must have the same number of rows.
+
+---
+
+## Pasting rows and columns
+
+* Several rows and columns can be _pasted_ into a data frame using:
+  * `rbind()` to paste rows.
+  <pre>
+  > dat4 <- data.frame(COUNTY="SELVA", POPULATION=191432,
+                             VACCINATION=122082)
+  > dat5 <- rbind(dat3, dat4)
+  > dat5
+           COUNTY POPULATION VACCINATION
+  1   OSONA     180364      119624
+  2 MARESME     506901      343637
+  3  SEGRIA     233615      156648
+  4   SELVA     191432      122082
+  </pre>
+
+  
+```{r}
+dat1 <- data.frame(COUNTY=c("OSONA", "MARESME", "SEGRIA"),
+                   POPULATION=c(180364, 506901, 233615))
+dat2 <- data.frame(COUNTY=c("OSONA", "MARESME", "SEGRIA"),
+                   VACCINATION=c(119624, 343637, 156648))
+dat3 <- cbind(dat1, VACCINATION=dat2[, "VACCINATION"])
+dat4 <- data.frame(COUNTY="SELVA", POPULATION=191432,
+                   VACCINATION=122082)
+dat5 <- rbind(dat3, dat4)
+```
+
+`r emo::ji("warning")` __Important__: When pasting data you have to make sure 
+that they have the same dimensions. In the case of pasting rows with `rbind`,
+`data.frame` objects must have the same number of columns with identical column names.
+
 
 ---
 
@@ -255,240 +358,144 @@ store the result in a new column.
 
 ---
 
-## Sorting and ordering data
+## Adding columns
 
-* In some cases we might be interested in sorting or ordering our objects. 
+* We can add a new column to a `data.frame` object by doing an assignment of a
+  vector of values on that new column, specified with either the `[[` or the `$`
+  operator, followed by the name of the new column.
+&nbsp;&nbsp;
+* You can perform operations with columns and other columns and/or vectors and 
+store the result in a new column.
   <pre>
-  > numbers <- round(runif(15, min=0, max=50))
-  > numbers
-   [1] 47 34 45 24 18  0  3  3 15 24 37 31 34 26  6
+  > dat5$VPERCENTAGE <- 100 * dat5$VACCINATION / dat5$POPULATION
+  > dat5
+       COUNTY POPULATION VACCINATION VPERCENTAGE
+  1   OSONA     180364      119624    66.32366
+  2 MARESME     506901      343637    67.79174
+  3  SEGRIA     233615      156648    67.05391
+  4   SELVA     191432      122082    63.77304
   </pre>
-  
-* There are two main functions to do this:
-  * `sort()` allows to sort a vector into ascending or descending order.
-    <pre>
-    > sort(numbers, decreasing=FALSE)
-    [1]  0  3  3  6 15 18 24 24 2s6 31 34 34 37 45 47
-    </pre>
-  
-  * `order()` returns the indexes that allow rearranging a vector into ascending
-    or descending order. This function is specially useful when sorting objects
-    like `data frames`.
-    <pre>
-    > order(numbers, decreasing=FALSE)
-    [1]  6  7  8 15  9  5  4 10 14 12  2 13 11  3  1
-    </pre>
-
-```{r}
-numbers <- round(runif(15, min=0, max=50))
-numbers
-sort(numbers, decreasing=FALSE)
-order(numbers, decreasing=FALSE)
-```
+* Note that, in the above line, R applied the recycling rule, reusing the
+  value `100` to multiply every value in the vector resulting from the
+  division operation.
 
 
 ---
 
-## Pasting rows and columns into datasets
+## Combining datasets
 
-* Several rows and columns can be _pasted_ into a data frame using:
-  * `cbind()` to paste columns.
-  
-    <pre>
-    > data_1 <- data.frame(x1 = c(7, 3, 2, 9, 0),
-    +                      x2 = c(4, 4, 1, 1, 8),
-    +                      x3 = c(5, 3, 9, 2, 4))
-    > data_2 <- data.frame(z1 = c(1, 5, 9, 4, 0),
-    +                      z2 = c(0, 9, 8, 1, 6))
-    > cbind(data_1, data_2)
-      x1 x2 x3 z1 z2
-    1  7  4  5  1  0
-    2  3  4  3  5  9
-    3  2  1  9  9  8
-    4  9  1  2  4  1
-    5  0  8  4  0  6
-    </pre>
+* Combining datasets of different dimensions is one of the most common
+  operations performed for answering questions from data.
 
-`r emo::ji("warning")` __Important__: When pasting data you have to make sure 
-that they have the same dimensions, that is same number of rows for pasting 
-columns (`cbind`) and same column numbers and names for pasting rows (`rbind`).
+![:scale 50%](img/ExampleNaturalJoin.png)
 
----
-
-## Pasting rows and columns into datasets
-
-* Several rows and columns can be _pasted_ into a data frame using:
-  
-  * `rbind()` to paste rows.
-  
+* In this example, once we combine the city population with
+  the absolute incidence, we can now calculate the relative
+  incidence per 100,000 inhabitants:
   <pre>
-  > data_3 <- data.frame(x1 = c(3, 1),
-  +                      x2 = c(5, 8),
-  +                      x3 = c(1, 6))
-  > rbind(data_1, data_3)
-    x1 x2 x3
-  1  7  4  5
-  2  3  4  3
-  3  2  1  9
-  4  9  1  2
-  5  0  8  4
-  6  3  5  1
-  7  1  8  6
+  > dat$CASESPER100K <- 100000 * dat$CASES / dat$POPULATION
   </pre>
 
-  
-```{r}
-data_1 <- data.frame(x1 = c(7, 3, 2, 9, 0),
-                     x2 = c(4, 4, 1, 1, 8),
-                     x3 = c(5, 3, 9, 2, 4))
-data_2 <- data.frame(z1 = c(1, 5, 9, 4, 0),
-                     z2 = c(0, 9, 8, 1, 6))
-cbind(data_1, data_2)
-
-data_3 <- data.frame(x1 = c(3, 1),
-                     x2 = c(5, 8),
-                     x3 = c(1, 6))
-rbind(data_1, data_3)
-```
-
-`r emo::ji("warning")` __Important__: When pasting data you have to make sure 
-that they have the same dimensions, that is same number of rows for pasting 
-columns (`cbind`) and same column numbers and names for pasting rows (`rbind`).
 
 ---
 
 ## Combining datasets: `match()`
 
-* Datasets with the different shapes can be _combined_ using: 
-  * `match()`, returns the matching positions of two vectors. 
-  
+* `match()`: returns a vector of the positions of (first) matches
+  of its first argument in its second.
   <pre>
-  > genes1 <- c("SOCS1", "SOCS2", "IRF1", "IRF2", "STAT1", "STAT2")
-  > genes2 <- c("IRF4", "SOCS1", "STAT2", "IRF1")
-  > match(genes1, genes2)
-  [1]  2 NA  4 NA NA  3
+  > datinc <- data.frame(CITY=c("Barcelona", "Barcelona",
+                                  "Girona", "Girona"),
+                           SEX=c("Male", "Female", "Male", "Female"),
+                           CASES=c(178, 151, 58, 49))
+  > datpop <- data.frame(CITY=c("Barcelona", "Girona", "Lleida"),
+                           POPULATION=c(1664182, 103369, 140403))
+  > mt <- match(datinc$CITY, datpop$CITY)
+  > mt
+  [1] 1 1 2 2
+  > datinc$POPULATION <- datpop$POPULATION[mt]
+  > datinc
+           CITY    SEX CASES POPULATION
+  1 Barcelona   Male   178    1664182
+  2 Barcelona Female   151    1664182
+  3    Girona   Male    58     103369
+  4    Girona Female    49     103369
   </pre>
 
+
 ```{r}
-genes1 <- c("SOCS1", "SOCS2", "IRF1", "IRF2", "STAT1", "STAT2")
-genes2 <- c("IRF4", "SOCS1", "STAT2", "IRF1")
-match(genes1, genes2)
+datinc <- data.frame(CITY=c("Barcelona", "Barcelona", "Girona", "Girona"),
+                     SEX=c("Male", "Female", "Male", "Female"),
+                     CASES=c(178, 151, 58, 49))
+datpop <- data.frame(CITY=c("Barcelona", "Girona"),
+                     POPULATION=c(1664182, 103369))
+mt <- match(datinc$CITY, datpop$CITY)
+mt
+datinc$POPULATION <- datpop$POPULATION[mt]
+datinc
 ```
 
 ---
 
 ## Combining datasets: `merge()`
 
-* Datasets with the different shapes can be _combined_ using: 
-  * `merge()`, _join_ data frames using common columns or row names. If there 
-  are matching colnames, they will be automatically used for merging the data. 
-  If not, the columns to use for merging need to be specified using the arguments
-  `by.x` and `by.y`.
-
+* `merge()`: combine two `data.frame` objects by common columns or row names,
+  or do other versions of database [_join_](https://en.wikipedia.org/wiki/Relational_algebra#Joins_and_join-like_operators) operations. We can specify different column
+  names for _joining_ using the arguments `by.x` and `by.y`.
   <pre>
-  > cases <- data.frame(month=c("Apr", "May", "Jun"),
-  +                     cases=c(500, 200, 300))
-  > deaths <- data.frame(date=c("Apr", "Jun", "Jul"),
-  +                      deats=c(30, 10, 20))
-  > merge(cases, deaths, by.x="month", by.y="date")
-    month cases deats
-  1   Apr   500    30
-  2   Jun   300    10
+  > merge(datinc, datpop)
+           CITY    SEX CASES POPULATION
+  1 Barcelona   Male   178    1664182
+  2 Barcelona Female   151    1664182
+  3    Girona   Male    58     103369
+  4    Girona Female    49     103369
   </pre>
 
 ```{r}
-cases <- data.frame(month=c("Apr", "May", "Jun"),
-                    cases=c(500, 200, 300))
-deaths <- data.frame(date=c("Apr", "Jun", "Jul"),
-                     deats=c(30, 10, 20))
-
-cases
-deaths
-
-merge(cases, deaths, by.x="month", by.y="date")
+merge(datinc, datpop)
 ```
   
----
-
-## Different types of "joining" using `merge()`
-
-Depending on your objective, you can merge data frames in different ways:
-
-  * _Natural join_. Keep only rows that match in both data frames (`all = FALSE`). 
-    This is the default method in the `merge()` function.
-    
-    <pre>
-    > merge(cases, deaths, by.x="month", by.y="date", all=FALSE)
-      month cases deats
-    1   Apr   500    30
-    2   Jun   300    10
-    </pre>
-  
-```{r}
-merge(cases, deaths, by.x="month", by.y="date", all=FALSE)
-```
-
-  * _Full outer join_. Keep all rows from both data frames (`all = TRUE`).
-  
-    <pre>
-    > merge(cases, deaths, by.x="month", by.y="date", all=TRUE)
-      month cases deats
-    1   Apr   500    30
-    2   Jul    NA    20
-    3   Jun   300    10
-    4   May   200    NA
-    </pre>
-  
-```{r}
-merge(cases, deaths, by.x="month", by.y="date", all=TRUE)
-```
 
 ---
 
-## Different types of "joining" using `merge()`
+## Combining datasets: `merge()`
 
-  * _Left outer join_. Include all rows from data frame `x` and only those from `y` that match (`all.x = TRUE`).
-
-    <pre>
-    > merge(cases, deaths, by.x="month", by.y="date", all.x=TRUE)
-      month cases deats
-    1   Apr   500    30
-    2   Jun   300    10
-    3   May   200    NA    
-    </pre>
-  
-```{r}
-merge(cases, deaths, by.x="month", by.y="date", all.x=TRUE)
-```  
-  
-  * _Right outer join_. Include all rows from data frame `y` and only those from `x` that match (`all.y = TRUE`).
-  
-    <pre>
-    > merge(cases, deaths, by.x="month", by.y="date", all.y=TRUE)
-      month cases deats
-    1   Apr   500    30
-    2   Jul    NA    20
-    3   Jun   300    10
-    </pre>
-
-```{r}
-merge(cases, deaths, by.x="month", by.y="date", all.y=TRUE)
-```  
+* Parameters `all`, `all.x` and `all.y` in the `merge()` function control
+  the way in which non-matching rows are returned, and their possible settings
+  correspond to different type of _join operations_.  
+  &nbsp;&nbsp;
+![](img/mergeJoins.jpg)
+.footer[Image from [R for Dummies, _How to use the merge() function with data sets in R_.](https://www.dummies.com/programming/r/how-to-use-the-merge-function-with-data-sets-in-r)]
+  <pre>
+  > merge(datinc, datpop, all=TRUE)
+           CITY    SEX CASES POPULATION
+  1 Barcelona   Male   178    1664182
+  2 Barcelona Female   151    1664182
+  3    Girona   Male    58     103369
+  4    Girona Female    49     103369
+  5    Lleida   &lt;NA&gt;    NA     140403
+  </pre>
 
 ---
 
 ## Concluding remarks
 
-* Adding new columns and performing operations using columns and vectors is
-  straightforward, but remember the recycling rule.
+* Analyzing data involves so-called
+  [data wrangling](https://en.wikipedia.org/wiki/Data_wrangling)
+  steps in which we may have to reorder data, paste rows and columns,
+  combine datasets or add new columns.
+
+* The recycling rule is a powerful feature, but beware of situations
+  in which it may be unintentionally applied.
+
+* It is important to understand the difference between `sort` and `order`.
+
+* Pasting rows and columns is straightforward with `rbind()` and `cbind()`.
   
-* We can order vectors (`sort`) and data frames (`order`).
-  
-* We we want to add new columns or rows to a data frame we can take advantage of
-  the `cbind` and `rbind` functions. 
-  
-* When we want to combine two data frames with different dimensions, we can 
-  use `merge` and specify the column we want to use for combining the data.
+* Most of the times, we will be interested in the _natural join_ operation,
+  in which we combine rows from two datasets with **matching values in a common
+  column**. This can be achieved either with the `match()` function or the
+  `merge()` function with default parameters.
 
 
 ---
