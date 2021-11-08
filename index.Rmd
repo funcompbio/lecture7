@@ -682,4 +682,25 @@ knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/476fa4025501dcec0
 
 > Online book [R for Data Science](https://r4ds.had.co.nz) by [Hadley Wickham](http://hadley.nz).
 
+---
+
+## Bonus track: R-Ladies (Barcelona)
+
+```{r, out.width="15%", include=TRUE}
+knitr::include_graphics("https://rladies.org/wp-content/uploads/2016/12/R-LadiesGlobal.png")
+```
+
+
+R-Ladies is a world-wide organization to promote gender diversity in the R community. 
+
+* Supporting minority gender R enthusiasts achieve programming potential.
+* Building a collaborative global network of R leaders, mentors, learners and developers.
+* Encouraging, inspiring and empowering.
+* Creating safe space for everyone.
+
+R-Ladies Barcelona organizes monthtly meetups including R-related workshops, 
+tutorials and talks. 
+
+* Twitter: [@RLadiesBCN](https://twitter.com/rladiesbcn)
+* Meetup: [rladies-barcelona](https://www.meetup.com/rladies-barcelona/)
 
