@@ -32,10 +32,9 @@ class: title-slide, middle, center
 
 # Data manipulation and plotting with R
 
-## Robert Castelo & Mireia Ramos
+## Robert Castelo
 [robert.castelo@upf.edu](mailto:robert.castelo@upf.edu)
-[mireia.ramos@upf.edu](mailto:mireia.ramos@upf.edu)
-### Dept. of Experimental and Health Sciences
+### Dept. of Medicine and Life Sciences
 ### Universitat Pompeu Fabra
 
 <br>
@@ -43,12 +42,12 @@ class: title-slide, middle, center
 ## Fundamentals of Computational Biology
 ### BSc on Human Biology
 ### UPF School of Health and Life Sciences
-### Academic Year 2021-2022
+### Academic Year 2022-2023
 
 ---
 class: center, middle, inverse
 
-# Control flow statements
+# Control flow, vectorization and implicit looping
 
 ---
 
@@ -60,7 +59,8 @@ class: center, middle, inverse
 i <- 1 ; j <- 0
 </pre>
 * Conditional and looping statements have the condition surrounded by
-  parentheses `( )` and the associated code by braces `{ }` (except in single lines).
+  parentheses `( )` and the associated code by braces `{ }` (except in
+  single-line code blocks).
 <pre>
 if (i > 0)
 &nbsp;&nbsp;j <- i * 10
@@ -118,13 +118,13 @@ for (i in 1:10) {
 
 ## Lists and Implicit looping: an example
 
-* In every R session you can access by default a `data.frame` object called `iris`
-corresponding to a classical data set on the taxonomic characteristics of flowers
-used by
-[Fisher (1936)](https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1469-1809.1936.tb02137.x)
-to introduce certain statistical concepts. It contains measurements of the flowers of
-fifty plants for each of the three species _Iris setosa_, _Iris versicolor_ and
-_Iris virginica_.
+* R has an example `data.frame` object called `iris`, directly available
+  after starting R, corresponding to a classical data set on the taxonomic
+  characteristics of flowers used by
+  [Fisher (1936)](https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1469-1809.1936.tb02137.x)
+  to introduce certain statistical concepts. It contains measurements of the
+  flowers of fifty plants for each of the three species _Iris setosa_,
+  _Iris versicolor_ and _Iris virginica_.
 <pre>
 > head(iris)
       Sepal.Length Sepal.Width Petal.Length Petal.Width Species
@@ -143,19 +143,17 @@ _Iris virginica_.
 
 ## Lists and Implicit looping: an example
 
-* Long way, using explicit looping:
+* Calculate mean [sepal](https://en.wikipedia.org/wiki/Sepal)
+  length per species, using explicit looping:
 <pre>
 > means_all <- c()
-&nbsp;&nbsp;
 > for (i in levels(iris$Species)) {
-&nbsp;&nbsp;mask <- iris$Species == i
-&nbsp;&nbsp;sepal_lengths <- iris$Sepal.Length[mask]
-&nbsp;&nbsp;mean <- mean(sepal_lengths)
-&nbsp;&nbsp;means_all <- c(means_all, mean)
-}
-&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;mask <- iris$Species == i
+&nbsp;&nbsp;&nbsp;&nbsp;sepal_lengths <- iris$Sepal.Length&#091;mask&#093;
+&nbsp;&nbsp;&nbsp;&nbsp;mean <- mean(sepal_lengths)
+&nbsp;&nbsp;&nbsp;&nbsp;means_all <- c(means_all, mean)
+&nbsp;&nbsp;}
 > names(means_all) <- levels(iris$Species)
-&nbsp;&nbsp;
 > means_all
   setosa versicolor  virginica 
    5.006      5.936      6.588 
@@ -165,36 +163,107 @@ _Iris virginica_.
 
 ## Lists and Implicit looping: an example
 
-* Short way, using **implicit** looping:
+* A more compact way, using **implicit** looping. First
+  group values by category using the function `split()`:
 
 <pre>
 > sepal_list <- split(iris$Sepal.Length, iris$Species)
-&nbsp;&nbsp;
+> class(sepal_list)
+[1] "list"
+> sepal_list
+$setosa
+ [1] 5.1 4.9 4.7 4.6 5.0 5.4 4.6 5.0 4.4 4.9 5.4 4.8 4.8 4.3 5.8 5.7 5.4 5.1 5.7
+[20] 5.1 5.4 5.1 4.6 5.1 4.8 5.0 5.0 5.2 5.2 4.7 4.8 5.4 5.2 5.5 4.9 5.0 5.5 4.9
+[39] 4.4 5.1 5.0 4.5 4.4 5.0 5.1 4.8 5.1 4.6 5.3 5.0
+$versicolor
+ [1] 7.0 6.4 6.9 5.5 6.5 5.7 6.3 4.9 6.6 5.2 5.0 5.9 6.0 6.1 5.6 6.7 5.6 5.8 6.2
+[20] 5.6 5.9 6.1 6.3 6.1 6.4 6.6 6.8 6.7 6.0 5.7 5.5 5.5 5.8 6.0 5.4 6.0 6.7 6.3
+[39] 5.6 5.5 5.5 6.1 5.8 5.0 5.6 5.7 5.7 6.2 5.1 5.7
+$virginica
+ [1] 6.3 5.8 7.1 6.3 6.5 7.6 4.9 7.3 6.7 7.2 6.5 6.4 6.8 5.7 5.8 6.4 6.5 7.7 7.7
+[20] 6.0 6.9 5.6 7.7 6.3 6.7 7.2 6.2 6.1 6.4 7.2 7.4 7.9 6.4 6.3 6.1 7.7 6.3 6.4
+[39] 6.0 6.9 6.7 6.9 5.8 6.8 6.7 6.7 6.3 6.5 6.2 5.9
+</pre>
+
+---
+
+## Lists and Implicit looping: an example
+
+* Second, use either the `lapply()` or `sapply()` function:
+
+<pre>
+> lapply(sepal_list, mean)
+$setosa
+[1] 5.006
+
+$versicolor
+[1] 5.936
+
+$virginica
+[1] 6.588
 > sapply(sepal_list, mean)
   setosa versicolor  virginica 
    5.006      5.936      6.588 
 </pre>
 
-```{r}
-head(iris)
-levels(iris$Species)
+* The difference between `lapply()` and `sapply()` is that
+  the former always returns a `list` object, while the latter
+  returns a _simplified_ object (e.g., a vector) if possible.
 
-## Long way
-means_all <- c()
-for (i in levels(iris$Species)) {
-  mask <- iris$Species == i
-  sepal_lengths <- iris$Sepal.Length[mask]
-  mean <- mean(sepal_lengths)
-  means_all <- c(means_all, mean)
-}
-names(means_all) <- levels(iris$Species)
-means_all
+---
 
-## Short way
-sepal_list <- split(iris$Sepal.Length, iris$Species)
-sapply(sepal_list, mean)
-```
+## Summary statistics from data subsets
 
+* The `aggregate()` function in R provides a more direct way
+  to obtain summary statistics from data subsets:
+
+<pre>
+> aggregate(iris$Sepal.Length, list(Species=iris$Species), mean)
+     Species     x
+1     setosa 5.006
+2 versicolor 5.936
+3  virginica 6.588
+</pre>
+
+--
+<pre>
+> aggregate(iris[, colnames(iris) != "Species"],
+&nbsp;&nbsp;list(Species=iris$Species), mean)
+     Species Sepal.Length Sepal.Width Petal.Length Petal.Width
+1     setosa        5.006       3.428        1.462       0.246
+2 versicolor        5.936       2.770        4.260       1.326
+3  virginica        6.588       2.974        5.552       2.026
+</pre>
+
+* The second argument must be a `list` object and
+  the result is a `data.frame` object.
+
+---
+
+## Summary statistics from data subsets
+
+* The `aggregate()` function allows one to use a more
+  compact _formula_ syntax:
+
+<pre>
+> aggregate(Sepal.Length ~ Species, data=iris, mean)
+     Species Sepal.Length 
+1     setosa        5.006
+2 versicolor        5.936
+3  virginica        6.588
+</pre>
+
+<pre>
+> aggregate(. ~ Species, data=iris, mean)
+     Species Sepal.Length Sepal.Width Petal.Length Petal.Width
+1     setosa        5.006       3.428        1.462       0.246
+2 versicolor        5.936       2.770        4.260       1.326
+3  virginica        6.588       2.974        5.552       2.026
+</pre>
+
+* Compare the previous line of code with the more classical
+  programming approach using explicit looping shown in a
+  [previous slide](file:///genomics/users/rcastelo/doc/docencia/fbc/lecture7/docs/index.html#7).
 
 ---
 
@@ -206,14 +275,16 @@ sapply(sepal_list, mean)
 * Vectorized operations are much faster than loops.  
   &nbsp;&nbsp;
 * Lists and implicit looping are a very efficient way to apply functions to 
-  specific groups of data.
-  
+  specific groups of data.  
+  &nbsp;&nbsp;
+* The aggregate function is a more direct way to calculate summary statistics
+  from data subsets.
 
 ---
+
 class: center, middle, inverse
 
 # Data manipulation
-
 
 ---
 
@@ -362,7 +433,7 @@ that they have the same dimensions. In the case of pasting rows with `rbind`,
 
 * We can add a new column to a `data.frame` object by doing an assignment of a
   vector of values on that new column, specified with either the `[[` or the `$`
-  operator, followed by the name of the new column.
+  operator, followed by the name of the new column.  
 &nbsp;&nbsp;
 * You can perform operations with columns and other columns and/or vectors and 
 store the result in a new column.
@@ -696,6 +767,8 @@ knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/476fa4025501dcec0
   * Encouraging, inspiring and empowering.
   * Creating safe space for everyone.
 * [R-Ladies Barcelona](https://rladies.org/ladies-complete-list/locality/Barcelona)
-  organizes monthtly meetups including R-related workshops, tutorials and talks.
+  organizes
+  [monthly meetups](https://www.meetup.com/rladies-barcelona),
+  including R-related workshops, tutorials and talks.
 * Twitter: [@RLadiesBCN](https://twitter.com/rladiesbcn)
 * Meetup: [rladies-barcelona](https://www.meetup.com/rladies-barcelona)
