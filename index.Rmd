@@ -6,6 +6,7 @@
     xaringan::moon_reader:
       nature:
         beforeInit: js/macros.js
+        countIncrementalSlides: false
       self_contained: true
       css: [default, default-fonts, ninjutsu, css/upf.css]
       seal: false
@@ -41,8 +42,8 @@ class: title-slide, middle, center
 
 ## Fundamentals of Computational Biology
 ### BSc on Human Biology
-### UPF School of Health and Life Sciences
-### Academic Year 2023-2024
+### UPF School of Medicine and Life Sciences
+### Academic Year 2024-2025
 
 ---
 class: center, middle, inverse
@@ -263,7 +264,7 @@ $virginica
 
 * Compare the previous line of code with the more classical
   programming approach using explicit looping shown in a
-  [previous slide](file:///genomics/users/rcastelo/doc/docencia/fbc/lecture7/docs/index.html#7).
+  [previous slide](#7).
 
 ---
 
@@ -504,8 +505,9 @@ store the result in a new column.
 ![:scale 50%](img/ExampleNaturalJoin.png)
 
 * In this example, once we combine the city population with
-  the absolute incidence, we can now calculate the relative
-  incidence per 100,000 inhabitants:
+  the absolute incidence, we can now calculate the
+  [cumulative incidence](https://en.wikipedia.org/wiki/Incidence_%28epidemiology%29)
+  per 100,000 inhabitants:
   <pre>
   > dat$CASESPER100K <- 100000 * dat$CASES / dat$POPULATION
   </pre>
