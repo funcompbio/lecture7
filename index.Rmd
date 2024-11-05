@@ -683,12 +683,13 @@ plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p",
 
 ## Other types of plots
 
-* A _barplot_ is used to represent a categorical variable such as a factor in the 
+* A [_bar plot_, or bar chart,](https://en.wikipedia.org/wiki/Bar_chart)
+  is used to represent a categorical variable such as a factor in the 
   x axis and a numeric value in the y axis.  
   &nbsp;&nbsp;
-* The function `barplot()` creates a bar plot with vertical or horizontal bars by
-  just providing their height as a vector. The vector names will be used to plot
-  the x axis labels.
+* The R function `barplot()` creates a bar plot with vertical or horizontal
+  bars by just providing their height as a vector. The vector names will be
+  used to plot the x axis labels.
   <pre>
   barplot(table(iris$Species), col=2:4, 
             xlab="Species", ylab="Number of observations")
@@ -703,12 +704,13 @@ barplot(table(iris$Species), col=2:4, xlab="Species", ylab="Number of observatio
 
 ## Other types of plots
 
-* A _boxplot_ is used to plot the distribution of a continuous (numeric) variable
-  over different groups (factors).  
+* A [_box plot_](https://en.wikipedia.org/wiki/Box_plot)
+  is used to plot the location, spread and skewness of a continuous (numerical)
+  variable over different groups (factors).  
   &nbsp;&nbsp;
-* The function `boxplot()` produces this specific plot, by providing a formula 
-  `y ~ grp`, where`y` is a numeric vector and `grp` is a grouping variable 
-  (usually a factor).
+* The R function `boxplot()` produces this specific plot, by providing a
+  formula `y ~ grp`, where`y` is a numeric vector and `grp` is a grouping
+  variable (usually a factor).
   <pre>
   boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, 
             xlab = "Species", ylab = "Sepal length")
