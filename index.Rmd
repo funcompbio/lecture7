@@ -1,5 +1,5 @@
 ---
-  title: "Programming with data: the R language"
+  title: "Data manipulation with R"
   author: Robert Castelo
 
   output:
@@ -31,7 +31,7 @@ knitr::knit_hooks$set(small.mar=function(before, options, envir) {
 
 class: title-slide, middle, center
 
-# Data manipulation and plotting with R
+# Data manipulation with R
 
 ## Robert Castelo
 [robert.castelo@upf.edu](mailto:robert.castelo@upf.edu)
@@ -41,9 +41,9 @@ class: title-slide, middle, center
 <br>
 
 ## Fundamentals of Computational Biology
-### BSc on Human Biology
+### BSc in Biomedical Sciences
 ### UPF School of Medicine and Life Sciences
-### Academic Year 2024-2025
+### Academic Year 2025-2026
 
 ---
 class: center, middle, inverse
@@ -84,7 +84,7 @@ for (i in 1:10) {
 * The R language is interpreted, vectorized and includes implicit memory
   management.  
   &nbsp;&nbsp;
-* Looping statements are slow in R. The following example would be a (wrong)
+* Looping statements are slow in R. The following example would be a suboptimal
   approach in R following a classical programming style:
   <pre>
   x <- 1:100
@@ -93,7 +93,7 @@ for (i in 1:10) {
       logsum <- logsum + log(x[i])
   }
   </pre>
-* This would be the vectorized (right) approach in R:
+* This would be the vectorized optimal approach in R:
   <pre>
   logsum <- sum(log(x))
   </pre>
@@ -145,7 +145,7 @@ for (i in 1:10) {
 ## Lists and Implicit looping: an example
 
 * Calculate mean [sepal](https://en.wikipedia.org/wiki/Sepal)
-  length per species, using explicit looping:
+  length per species, using **explicit** looping:
 <pre>
 > means_all <- c()
 > for (i in levels(iris$Species)) {
@@ -581,7 +581,7 @@ merge(datinc, datpop)
   correspond to different type of _join operations_.  
   &nbsp;&nbsp;
 ![](img/mergeJoins.jpg)
-.footer[Image from [R for Dummies, _How to use the merge() function with data sets in R_.](https://www.dummies.com/programming/r/how-to-use-the-merge-function-with-data-sets-in-r)]
+.footer[Image from [R for Dummies, _How to use the merge() function with data sets in R_.](https://www.dummies.com/book/technology/programming-web-design/r/r-for-dummies-2nd-edition-281846)]
   <pre>
   > merge(datinc, datpop, all=TRUE)
            CITY    SEX CASES POPULATION
@@ -614,214 +614,3 @@ merge(datinc, datpop)
   column**. This can be achieved either with the `match()` function or the
   `merge()` function with default parameters.
 
----
-class: center, middle, inverse
-
-# Plotting with R
-
----
-
-## Generic plot types in R
-
-* The basic plotting function in R is `plot()`.  
-  &nbsp;&nbsp;
-* The first element (`x`) is what will be represented in the x axis and the 
-  second element (`y`) what will be shown in the y axis.  
-  &nbsp;&nbsp;
-* You can specify the type of plot that should be drawn using the argument `type`.
-  Some examples are: `type = "p"` for points, `type = "l"` for lines or `type="b"`
-  for both.
-  <pre>
-  plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p") 
-  </pre>
-```{r example-plot, out.width="70%", include=TRUE, fig.asp=.6}
-plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p")
-```
-
----
-
-## Modifying plot graphical parameters
-
-* There are many graphical parameters that can be changed to make the plots more
-  attractive, such as the axis labels or the coloring.  
-  &nbsp;&nbsp;
-* A list can be found at the `plot()` function documentation: `?graphics::plot`
-  <pre>
-  plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p",
-         xlab = "Iris sepal length", ylab = "Iris sepal width",
-         pch = 19, cex = 1.5,
-         col=c("red", "blue", "green")[iris$Species])
-  </pre>
-
-```{r example-plot-mod, out.width="70%", include=TRUE, fig.asp=.6}
-plot(x=iris$Sepal.Length, y=iris$Sepal.Width, type="p", 
-     xlab = "Iris sepal length", ylab = "Iris sepal width",
-     main = "Scatterplot",
-     pch = 19, cex = 1.5,
-     col=c("red", "blue", "green")[iris$Species]) # Only works when the variable is a FACTOR
-```
-
----
-
-## Modifying plot graphical parameters
-
-* `xlab` and `ylab`. Titles for the x and y axes, respectively.  
-  &nbsp;&nbsp;
-* `main`. Title for the plot.  
-  &nbsp;&nbsp;
-* `pch`. Shape of the points (full description at `? pch`)
-
-![](img/pch.png)
-
-* `cex`. Number indicating how much the symbols should be scaled relative to the
-  default.  
-  &nbsp;&nbsp;
-* `col`. Colors for the lines and points. You can specify a single or multiple 
-  colors (one for each point).
-
----
-
-## Other types of plots
-
-* A [_bar plot_, or bar chart,](https://en.wikipedia.org/wiki/Bar_chart)
-  is used to represent a categorical variable such as a factor in the 
-  x axis and a numeric value in the y axis.  
-  &nbsp;&nbsp;
-* The R function `barplot()` creates a bar plot with vertical or horizontal
-  bars by just providing their height as a vector. The vector names will be
-  used to plot the x axis labels.
-  <pre>
-  barplot(table(iris$Species), col=2:4, 
-            xlab="Species", ylab="Number of observations")
-  </pre>
-
-```{r barplot-example, include=TRUE, out.width="50%", fig.asp=.85}
-barplot(table(iris$Species), col=2:4, xlab="Species", ylab="Number of observations")
-```
-
-
----
-
-## Other types of plots
-
-* A [_box plot_](https://en.wikipedia.org/wiki/Box_plot)
-  is used to plot the location, spread and skewness of a continuous (numerical)
-  variable over different groups (factors).  
-  &nbsp;&nbsp;
-* The R function `boxplot()` produces this specific plot, by providing a
-  formula `y ~ grp`, where`y` is a numeric vector and `grp` is a grouping
-  variable (usually a factor).
-  <pre>
-  boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, 
-            xlab = "Species", ylab = "Sepal length")
-  </pre>
-
-```{r boxplot-example, include=TRUE, out.width="50%", fig.asp=.85}
-boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, 
-        xlab = "Species", ylab = "Sepal length")
-```
-
-
----
-
-## Combine plots using `par()`
-
-* The function `par()` allows setting or inquiring about some specific graphical
-  parameters, explained in the help section `?par`.  
-  &nbsp;&nbsp;
-* We can specify the number of subplots we need using the argument `mfrow = c(nr, nc)`, 
-  where `nr` are the number of rows and nc` the number of columns you want to 
-  divide your device into.
-  <pre>
-  par(mfrow=c(1,2))
-  barplot(table(iris$Species), col=2:4, cex.names=.9)
-  boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, cex.axis=.85)
-  </pre>
-
-```{r combine-plots, include=TRUE, out.width="70%", fig.asp=.5, small.mar=TRUE}
-par(mfrow=c(1,2))
-barplot(table(iris$Species), col=2:4, cex.names=.9)
-boxplot(iris$Sepal.Length ~ iris$Species, col=2:4, cex.axis=.85)
-```
-
-
----
-
-## Concluding remarks
-
-* There are different functions to produce plots in R. The one you use will 
-  depend on the type of data you have.  
-  &nbsp;&nbsp;
-* Additional graphical parameters can be modified by providing them as 
-  arguments to the plotting functions.  
-  &nbsp;&nbsp;
-* You can combine plots side-by-side by using the function _par()_.
-
----
-
-## Bonus track: the Tidyverse
-
-The [tidyverse](https://www.tidyverse.org/) is an opinionated collection of R 
-packages designed for data science. All packages share an underlying design 
-philosophy, grammar, and data structures.
-
-```{r hex-ggplot2, out.width="10%", include=TRUE}
-knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/2c6239d311be6d037c251c71c3902792f8c4ddd2/12f67/css/images/hex/ggplot2.png")
-```
-
-* _[ggplot2](https://ggplot2.tidyverse.org/)_. System for creating
-  graphics, based on The Grammar of Graphics. You provide the data, tell ggplot2
-  how to map variables to aesthetics and it takes care of the details. 
-  
-```{r, out.width="10%", include=TRUE}
-knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/621a9c8c5d7b47c4b6d72e8f01f28d14310e8370/193fc/css/images/hex/dplyr.png")
-```
-
-* _[dplyr](https://dplyr.tidyverse.org/)_. Provides a grammar of data manipulation, 
-  with a consistent set of verbs that solve the most common data manipulation 
-  challenges. 
-
----
-
-## Bonus track: the Tidyverse
-
-The [tidyverse](https://www.tidyverse.org/) is an opinionated collection of R 
-packages designed for data science. All packages share an underlying design 
-philosophy, grammar, and data structures.
-
-
-```{r, out.width="10%", include=TRUE}
-knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/476fa4025501dcec05be08248b32d390dd2337d5/574c6/css/images/hex/tidyr.png")
-```
-
-* _[tidyr](https://tidyr.tidyverse.org/)_. Provides a set of functions that help 
-  you get to tidy data. Tidy data is data with a consistent form: in brief, every 
-  variable goes in a column, and every column is a variable. 
-
-
-> Online book [R for Data Science](https://r4ds.had.co.nz) by [Hadley Wickham](http://hadley.nz).
-
-`r emo::ji("warning")` __Important__: When searching on the internet for how
-to do something in R, you will often find solutions based on tidyverse packages
-(ggplot, etc.). This can be empowering if you understand what you are doing, but
-fustrating if you don't.
-
----
-
-## Bonus track: R-Ladies (Barcelona)
-
-![](img/R-LadiesGlobal.png)
-
-* [R-Ladies](https://rladies.org) is a world-wide organization to promote gender
-  diversity in the R community.
-  * Supporting minority gender R enthusiasts achieve programming potential.
-  * Building a collaborative global network of R leaders, mentors, learners and
-    developers.
-  * Encouraging, inspiring and empowering.
-  * Creating safe space for everyone.
-* [R-Ladies Barcelona](https://rladies.org/ladies-complete-list/locality/Barcelona)
-  organizes
-  [monthly meetups](https://www.meetup.com/rladies-barcelona),
-  including R-related workshops, tutorials and talks.
-* Twitter: [@RLadiesBCN](https://twitter.com/rladiesbcn)
-* Meetup: [rladies-barcelona](https://www.meetup.com/rladies-barcelona)
